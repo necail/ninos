@@ -1,0 +1,31 @@
+<div style="background-color: white;">
+  <div>
+    Add Thinking Time<br>
+    Kid: <select #kidsThinking>
+      <option value="240">ji</option>
+      <option value="180">je</option>
+    </select><br>
+    Time: <input #timeThinking [value]="kidsThinking.value"><br>
+    <button (click)="addThinking(kidsThinking.selectedOptions[0].innerHTML, timeThinking.value)">Add</button>
+  </div>
+  <div>
+    Add Tidy Up<br>
+    Kids: <input #kidsTydyUp value="ji,je"><br>
+    <button (click)="addTidyUp(kidsTydyUp.value)">Add</button>
+  </div>
+  <div>
+    Add Potty<br>
+    Kids: <input #kidsPotty value="je"><br>
+    Repeat: <input #repeatPotty value="3600"><br>
+    <button (click)="addPotty(kidsPotty.value, repeatPotty.value)">Add</button>
+  </div>
+  <div class="text" *ngFor="let item of items | async">
+    <pre>{{item | json}}</pre>
+    <div>
+      <button (click)="delete(item)">Delete</button>
+      <button (click)="snooze(item)">Snooze</button>
+      <button (click)="finish(item)">Finish</button>
+      <button *ngFor="let kid of item.kids" (click)="star(kid)">Star {{kid}}</button>
+    </div>
+  </div>
+</div>

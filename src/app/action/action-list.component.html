@@ -1,0 +1,27 @@
+
+<div *ngFor="let kid_stars of stars">
+  <div style="display: inline;"><img [src]="'./assets/' + kid_stars.$key + '.png'" height="100"></div>
+
+  <div style="display: inline;">
+    <img
+        *ngFor="let star of kid_stars.stars"
+        height="70"
+        src="http://images.clipartpanda.com/clipart-star-RTA9RqzTL.png">
+  </div>
+</div>
+<div class="text" *ngFor="let item of items | async">
+  <div *ngIf="item.time <= time || item.snoozed">
+    <app-action 
+        (click)="onClick(item)"
+        [action]="item.action"
+        [kids]="item.kids"
+        [timer]="timeLeft(item, time)">
+    </app-action>
+    <div *ngIf="item.time <= time">
+      <audio autoplay>
+        <source src="http://onlineclock.net/audio/options/rooster.mp3" type="audio/mpeg">
+        <source src="http://onlineclock.net/audio/options/rooster.ogg" type="audio/ogg">
+      </audio>
+    </div>
+  </div>
+</div>

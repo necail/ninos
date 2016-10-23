@@ -1,0 +1,9 @@
+<div>
+  <img [src]="actionUrl" style="float: left;" height="100">
+    <div *ngFor="let kid of kids">
+      <img [src]="'./assets/' + kid + '.png'" [height]="100/kids.length">
+    </div>
+  <div *ngIf="timer > 0" style="background-color: gray; width: 400px;height: 10px;">
+    <div [style.width]="(400 / initialTimer * timer) + 'px'" style="background-color: red; height: 10px;"></div>
+  </div>
+</div>
