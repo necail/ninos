@@ -3,7 +3,9 @@
     "declaration": false,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "files": [ "../node_modules/firebase/firebase.d.ts" ],
+    "files": [
+        "../node_modules/later/later.min.js"
+    ],
     "lib": ["es6", "dom"],
     "mapRoot": "./",
     "module": "es6",

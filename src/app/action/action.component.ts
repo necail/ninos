@@ -1,27 +1,102 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter, ViewChild } from '@angular/core';
+
 
 @Component({
   selector: 'app-action',
   templateUrl: './action.component.html',
 })
 export class ActionComponent implements OnInit {
-  @Input() kids: string[];
-  @Input() action: string;
-  @Input() timer: number;
+  @Input() action: IAction;
+  @Output() finished = new EventEmitter<number | null>();
+  time: number;
+  statusTimer: NodeJS.Timer;
+  alarmTimer: NodeJS.Timer | number;
+  playing:boolean = false;
+  status: string;
+  recur: Later.IRecurrenceBuilder;
 
-  actionUrl: string;
-  initialTimer:number = 0;
-
-  private actions = {
-    potty: "http://www.clipartkid.com/images/27/toilet-clip-art-u7sD9M-clipart.png",
-    tidyUp: "https://s-media-cache-ak0.pinimg.com/originals/31/b0/5a/31b05aa68d8a23c840fb998c1f8cc9e0.jpg",
-    thinking: "http://www.cliparts101.com/files/287/32A135A382EC8D2D2322C723D15AE083/Man_Thinking.png"
-  };
 
   ngOnInit() {
-    this.actionUrl = this.actions[this.action];
-    if (this.timer > 0) {
-      this.initialTimer = this.timer;
+    this.statusTimer = setInterval(() => {
+      this.configureTimer();
+    }, 1000);
+    
+    if (this.action.conditions) {
+      later.date.localTime();
+      this.recur = later.parse.recur();
+      for (let cond of this.action.conditions.time) {
+        let hours = cond.hours.split("-").map(e => e as any * 1);
+        this.recur.and()
+            .every().hour().between(hours[0], hours[1])
+            .on(...cond.days.split(",").map(e => e as any * 1)).dayOfWeek();
+      }
     }
   }
+
+  getNextOccurrence(): number {
+    if (this.action.repeat_offset) {
+      let cand: Date = new Date(this.action.time + this.action.repeat_offset);
+      if (this.recur) cand = later.schedule(this.recur).next(1, cand) as Date;
+      return cand.getTime();
+    }
+    return null;
+  }
+
+  configureTimer() {
+    this.time = new Date().getTime();
+
+    if (this.action.show_after !== null && this.time > this.action.time + this.action.duration + this.action.show_after) {
+      this.status = "finish";
+      this.finished.emit(this.getNextOccurrence());
+    } else if (this.time > this.action.time + this.action.duration) {
+      this.status = "after";
+      if (this.action.duration == 0 && !this.alarmTimer && this.action.alarm) {
+        this.playing = true;
+        this.alarmTimer = 1;
+      } 
+    } else if (this.time > this.action.time) {
+      this.status = "running";
+      if (!this.alarmTimer && this.action.alarm) {
+        this.playing = true;
+        if (this.action.snooze) {
+          this.alarmTimer = setInterval(() => {
+            console.log('alarmTimer');
+            this.playing = true;
+          }, this.action.snooze);
+        } else {
+          this.alarmTimer = 1;
+        }
+      }
+    } else if (this.action.show_before && this.time > this.action.time - this.action.show_before) {
+      this.status = "before";
+    } else {
+      this.status = "hidden";
+    }
+    if (!(this.status == 'running' || (this.status == "after" && this.action.duration == 0))) {
+      clearInterval(this.alarmTimer as NodeJS.Timer);
+      this.alarmTimer = null;
+      return;
+    }
+
+  }
+}
+
+interface ITimeCondition {
+  hours: string | null;
+  days: string | null;
+}
+
+interface ICondition {
+  time: ITimeCondition[];
+}
+
+interface IAction {
+  time: number;
+  repeat_offset: number;
+  show_after: number | null;
+  duration: number;
+  alarm: string | null;
+  snooze: number | null;
+  show_before: number | null;
+  conditions: ICondition | null;
 }

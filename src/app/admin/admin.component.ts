@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { NgForm } from '@angular/forms';
 import { AngularFire, FirebaseListObservable } from 'angularfire2';
 
 @Component({
@@ -8,12 +9,17 @@ import { AngularFire, FirebaseListObservable } from 'angularfire2';
 })
 export class AdminComponent {
   items: FirebaseListObservable<any[]>;
+  stars = [];
 
   constructor(private af: AngularFire) {
-    this.items = af.database.list('ninos/actions', {
-      query: {
-        orderByChild: "time"
-      }
+    this.items = af.database.list('ninos/actions', {query: { orderByChild: "time" }});
+    af.database.list('ninos/stars').subscribe(data => {
+      this.stars = data.map(kid => {
+        return {
+          $key: kid.$key,
+          stars: Object.keys(kid).filter(k => !k.startsWith('$'))
+        };
+      });
     });
   }
 
@@ -41,6 +47,19 @@ export class AdminComponent {
 
   star(kid: string) {
     this.af.database.list(`ninos/stars/${kid}`).push(1);
+  }
+
+  removeStar(kid: string, star: string) {
+    this.af.database.object(`ninos/stars/${kid}/${star}`).remove();
+  }
+
+  date(t: number): Date {
+    return new Date(t);
+  }
+
+  onSubmit(form: NgForm): boolean {
+    alert(JSON.stringify(form.value));
+    return false;
   }
 
   addThinking(kid: string, time: number) {

@@ -6,12 +6,12 @@ import { AngularFire, FirebaseListObservable } from 'angularfire2';
   templateUrl: './action-list.component.html'
 })
 export class ActionListComponent {
-  items: FirebaseListObservable<any[]>;
+  actions: FirebaseListObservable<any[]>;
   stars = [];
   time: number;
 
   constructor(private af: AngularFire) {
-    this.items = af.database.list('ninos/actions', {query: {orderByChild: "time"}});
+    this.actions = af.database.list('ninos/actions', {query: {orderByChild: "time"}});
     af.database.list('ninos/stars').subscribe(data => {
       this.stars = data.map(kid => {
         return {
@@ -20,37 +20,39 @@ export class ActionListComponent {
         };
       });
     });
-    setInterval(() => {this.time = this.timer()}, 500)
+    setInterval(() => {this.time = new Date().getTime()}, 500)
   }
 
-  private timer() {
-    return new Date().getTime();
-  }
-
-  private timeLeft(item: any, time: number): number {
-    if (item.time < this.time - 5000) {
-      if (item.snooze) {
-        this.af.database.object(`ninos/actions/${item.$key}`)
-            .update({time: new Date().getTime() + item.snooze * 1000, snoozed: true});
+  private timeLeft(action: any, time: number): number {
+    if (action.time < this.time - 5000) {
+      if (action.snooze) {
+        this.af.database.object(`ninos/actions/${action.$key}`)
+            .update({time: new Date().getTime() + action.snooze * 1000, snoozed: true});
       } else {
-        this.finish(item);
+        this.finish(action);
       }
     }
-    return item.time - time;
+    return action.time - time;
   }
 
-  private finish(item: any){
-    if (item.repeat) {
-      this.af.database.object(`ninos/actions/${item.$key}`)
-          .update({time: this.timer() + item.repeat.every * 1000, snoozed: null});
+  private finish(action: any){
+    if (action.repeat) {
+      this.af.database.object(`ninos/actions/${action.$key}`)
+          .update({time: new Date().getTime() + action.repeat.every * 1000, snoozed: null});
     } else {
-      this.af.database.object(`ninos/actions/${item.$key}`).remove();
+      this.af.database.object(`ninos/actions/${action.$key}`).remove();
     }
   }
 
-  onClick(item: any) {
-    if (item.finishable) {
-      this.finish(item);
+  onFinish(action: any, time: number) {
+    if (time) {
+      this.af.database.object(`ninos/actions/${action.$key}`).update({time: time});
+    }
+  }
+
+  onClick(action: any) {
+    if (action.finishable) {
+      this.finish(action);
     }
   }
 }

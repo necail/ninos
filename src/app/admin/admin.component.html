@@ -1,4 +1,58 @@
 <div style="background-color: white;">
+  <div *ngFor="let kid_stars of stars">
+    {{kid_stars.$key}} has {{kid_stars.stars.length}} stars.
+    <button (click)="star(kid_stars.$key)">Add star</button>
+
+    <button
+        *ngFor="let star of kid_stars.stars"
+        (click)="removeStar(kid_stars.$key, star)">Remove Star</button>
+  </div>
+
+  <form #f="ngForm" (ngSubmit)="onSubmit(f)">
+    Type:
+    <select name="type" ngModel>
+      <option></option>
+    </select>
+    <br>
+    Icon:
+    <select name="icon" ngModel>
+      <option value="http://www.fumira.jp/cut/kodomo/img2/kodomo_illust-16.jpg">baño</option>
+      <option selected value="http://www.fumira.jp/cut/kodomo/img2/kodomo_illust-13.jpg">ordenar</option>
+      <option value="http://www.fumira.jp/cut/kodomo/img2/kodomo_illust-05.jpg">vestirse</option>
+      <option value="http://www.cliparts101.com/files/287/32A135A382EC8D2D2322C723D15AE083/Man_Thinking.png">thinking</option>
+    </select>
+    <br>
+    Alarm sound: 
+    <input type="checkbox" name="alarm" ngModel>
+
+    <select name="alarmUrl" ngModel>
+      <option value="http://onlineclock.net/audio/options/rooster.mp3">rooster</option>
+      <option selected value="http://onlineclock.net/audio/options/cuckoo-clock.mp3">cukoo</option>
+      <option value="http://onlineclock.net/audio/options/harp-strumming.mp3">harp</option>
+      <option value="http://www.cliparts101.com/files/287/32A135A382EC8D2D2322C723D15AE083/Man_Thinking.png">thinking</option>
+    </select>
+    <br>
+    Finishable:
+    <input type="checkbox" name="finishable" ngModel>
+    <br>
+    Kids:
+    <input type="text" name="kids" value="je,ji" ngModel>
+    <br>
+    Repeat:
+    <input type="checkbox" name="repeat" ngModel>
+    <input name="repeatEvery" value="3600" ngModel>
+    <br>
+    Snooze:
+    <input type="checkbox" name="snooze" ngModel>
+    <input name="snoozeTime" value="3600" ngModel>
+    <br>
+    <br>
+
+    <button type="submit">Submit</button>
+  </form>
+  <p>Form value: {{ f.value | json }}</p>
+
+
   <div>
     Add Thinking Time<br>
     Kid: <select #kidsThinking>
@@ -20,7 +74,7 @@
     <button (click)="addPotty(kidsPotty.value, repeatPotty.value)">Add</button>
   </div>
   <div class="text" *ngFor="let item of items | async">
-    <pre>{{item | json}}</pre>
+    {{item.name}}: {{date(item.time)}}
     <div>
       <button (click)="delete(item)">Delete</button>
       <button (click)="snooze(item)">Snooze</button>
