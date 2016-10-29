@@ -1,6 +1,6 @@
 <div *ngIf="status == 'before' || status == 'running' || status == 'after'">
-  <img [src]="action.icon" height="100">
-  <img *ngFor="let kid of action.kids" [src]="'./assets/' + kid + '.png'" [height]="100"> 
+  <img [src]="action.icon" height="100" (click)="onActionClick(true)">
+  <img *ngFor="let kid of action.kids" [src]="'./assets/' + kid + '.png'" height="100" (click)="onKidClick(kid)"> 
   <div *ngIf="playing">
     <audio #player autoplay (ended)="playing = false">
       <source [src]="action.alarm">

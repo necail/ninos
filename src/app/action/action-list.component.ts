@@ -22,7 +22,7 @@ export class ActionListComponent {
     });
   }
 
-  isScheduled(action: Object) {
+  isScheduled(action: Object): boolean {
     return 'time' in action;
   }
 
@@ -31,13 +31,11 @@ export class ActionListComponent {
   }
 
   onFinish(action: any, time: number) {
-    if (time) {
-      this.af.database.object(`ninos/actions/${action.$key}`).update({time: time});
-    }
+    this.af.database.object(`ninos/actions/${action.$key}`).update({time: time});
   }
 
-  onReady(kid: string, name: string) {
-    this.af.database.list(`ninos/stars/${kid}`).push(name);
+  onReady(action: any, kid: string) {
+    this.af.database.list(`ninos/stars/${kid}`).push(action.name);
   }
 
   onStatus(action: any, status: string) {

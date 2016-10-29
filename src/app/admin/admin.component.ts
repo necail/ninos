@@ -12,7 +12,7 @@ export class AdminComponent {
   stars = [];
 
   constructor(private af: AngularFire) {
-    this.items = af.database.list('ninos/actions', {query: { orderByChild: "time" }});
+    this.items = af.database.list('ninos/actions');
     af.database.list('ninos/stars').subscribe(data => {
       this.stars = data.map(kid => {
         return {
@@ -23,17 +23,8 @@ export class AdminComponent {
     });
   }
 
-  delete(item: any) {
-    this.af.database.object(`ninos/actions/${item.$key}`).remove();
-  }
-
-  snooze(item: any) {
-    if (item.snooze) {
-      this.af.database.object(`ninos/actions/${item.$key}`)
-          .update({time: new Date().getTime() + item.snooze * 1000, snoozed: true});
-    } else {
-      this.delete(item);
-    }
+  now(item: any) {
+    this.af.database.object(`ninos/actions/${item.$key}`).update({time: new Date().getTime()});
   }
 
   finish(item: any) {

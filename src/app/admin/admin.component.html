@@ -1,4 +1,4 @@
-<div style="background-color: white;">
+<div>
   <div *ngFor="let kid_stars of stars">
     {{kid_stars.$key}} has {{kid_stars.stars.length}} stars.
     <button (click)="star(kid_stars.$key)">Add star</button>
@@ -76,10 +76,9 @@
   <div class="text" *ngFor="let item of items | async">
     {{item.name}}: {{date(item.time)}}
     <div>
-      <button (click)="delete(item)">Delete</button>
-      <button (click)="snooze(item)">Snooze</button>
+      <button (click)="now(item)">Now</button>
       <button (click)="finish(item)">Finish</button>
-      <button *ngFor="let kid of item.kids" (click)="star(kid)">Star {{kid}}</button>
+      <button *ngFor="let kid of item.kids" (click)="star(item, kid)">Star {{kid}}</button>
     </div>
   </div>
 </div>

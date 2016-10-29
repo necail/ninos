@@ -24,8 +24,10 @@ export class ActionComponent implements OnInit {
       clearInterval(this.alarmTimer as NodeJS.Timer);
       this.alarmTimer = null;
     }
-    this._status = s;
-    this.onStatus.emit(s);
+    if (this._status != s) {
+      this._status = s;
+      this.onStatus.emit(s);
+    }
   }
 
   get status(): string {
@@ -38,7 +40,13 @@ export class ActionComponent implements OnInit {
     }, 200);
   }
 
-  getNextOccurrence(): number {
+  onActionClick(manual: boolean = false) {
+    if (manual && !this.action.finishable) {
+      return;
+    }
+    for (let kid of this.action.kids) {
+      this.addStar(kid)
+    }
     let recur: Later.IRecurrenceBuilder;
 
     if (this.action.conditions) {
@@ -52,11 +60,30 @@ export class ActionComponent implements OnInit {
       }
     }
     if (this.action.repeat_offset) {
-      let cand: Date = new Date(Math.max(this.action.time + this.action.repeat_offset, new Date().getTime()));
+      let ts: number = new Date().getTime() + (manual ? this.action.repeat_offset : 0);
+      let cand: Date = new Date(Math.max(this.action.time + this.action.repeat_offset, ts));
       if (recur) cand = later.schedule(recur).next(1, cand) as Date;
-      return cand.getTime();
+      this.onFinished.emit(cand.getTime());
+    } else {
+      this.onFinished.emit(null);
     }
-    return null;
+  }
+
+  onKidClick(kid: string) {
+    if (this.action.finishable) {
+      this.addStar(kid);
+      var index = this.action.kids.indexOf(kid);
+      this.action.kids.splice(index, 1);
+      if (this.action.kids.length == 0) {
+        this.onActionClick(true);
+      }
+    }
+  }
+
+  private addStar(kid: string) {
+    if (this.action.star && (this.status == 'before' || this.status == 'running')){
+      this.onReady.emit(kid);
+    }
   }
 
   configureTimer() {
@@ -64,7 +91,7 @@ export class ActionComponent implements OnInit {
 
     if (this.action.show_after !== null && this.time > this.action.time + this.action.duration + this.action.show_after) {
       this.status = "finish";
-      this.onFinished.emit(this.getNextOccurrence());
+      this.onActionClick();
     } else if (this.time > this.action.time + this.action.duration) {
       this.status = "after";
       if (this.action.duration == 0 && !this.alarmTimer && this.action.alarm) {
@@ -112,8 +139,11 @@ interface ICondition {
 
 interface IAction {
   time: number;
+  finishable: boolean;
+  star: boolean;
   repeat_offset: number;
   show_after: number | null;
+  kids: string[];
   duration: number;
   alarm: string | null;
   snooze: number | null;
