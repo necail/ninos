@@ -32,7 +32,7 @@ export class AdminComponent {
       this.af.database.object(`ninos/actions/${item.$key}`)
           .update({time: new Date().getTime() + item.repeat.every * 1000, snoozed: null});
     } else {
-      this.delete(item);
+      //this.delete(item);
     }
   }
 
