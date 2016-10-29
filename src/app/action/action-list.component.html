@@ -10,7 +10,12 @@
   </div>
 </div>
 <div class="text" *ngFor="let action of actions | async">
-  <div *ngIf="action.time">
-    <app-action (finished)="onFinish(action, $event)" [action]="action"></app-action>
+  <div *ngIf="isScheduled(action)">
+    <app-action
+        (onFinished)="onFinish(action, $event)"
+        (onReady)="onReady(action, $event)"
+        (onStatus)="onStatus(action, $event)"
+        [checkRunning]="checkRunning.bind(this)"
+        [action]="action"></app-action>
   </div>
 </div>

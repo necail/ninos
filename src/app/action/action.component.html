@@ -14,10 +14,9 @@
       [style.width]="(400 / (action.duration + action.show_before) * (time - action.time + action.show_before)) + 'px'"
       style="background-color: red; height: 10px;"></div>
 </div>
-<pre>
+<pre *ngIf="debug">
 {{action.name}}
 {{status}}
 Action Time: {{action.time | date:'EEE h:mm:ss a'}}
       Timer: {{time | date:'EEE h:mm:ss a'}}
-      debug: {{debug | json}}
 </pre>
