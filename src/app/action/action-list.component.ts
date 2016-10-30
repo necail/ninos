@@ -30,8 +30,10 @@ export class ActionListComponent {
     return this.status[action] == 'running';
   }
 
-  onFinish(action: any, time: number) {
-    this.af.database.object(`ninos/actions/${action.$key}`).update({time: time});
+  onFinish(schedulings: {id: string, time: number | null}[]) {
+    for (let schedule of schedulings) {
+      this.af.database.object(`ninos/actions/${schedule.id}`).update({time: schedule.time});
+    }
   }
 
   onReady(action: any, kid: string) {

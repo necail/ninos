@@ -9,7 +9,7 @@ import { environment } from '../../environments/environment';
 export class ActionComponent implements OnInit {
   @Input() action: IAction;
   @Input() checkRunning: (actionName: string) => boolean;
-  @Output() onFinished = new EventEmitter<number | null>();
+  @Output() onFinished = new EventEmitter<{id: string, time: number | null}[]>();
   @Output() onReady = new EventEmitter<string>();
   @Output() onStatus = new EventEmitter<string>();
   time: number;
@@ -59,13 +59,20 @@ export class ActionComponent implements OnInit {
             .on(...cond.days.split(",").map(e => e as any * 1)).dayOfWeek();
       }
     }
+    let schedulings: {id: string, time: number}[] = [];
     if (this.action.repeat_offset) {
       let cand: Date = new Date(new Date().getTime() + (manual ? this.action.repeat_offset : 0));
       if (recur) cand = later.schedule(recur).next(1, cand) as Date;
-      this.onFinished.emit(cand.getTime());
+      schedulings.push({id: this.action.$key, time: cand.getTime()})
     } else {
-      this.onFinished.emit(null);
+      schedulings.push({id: this.action.$key, time: null})
     }
+    if (this.action.run_next) {
+      for(let action of this.action.run_next) {
+        schedulings.push({id: action, time: new Date().getTime()})
+      }
+    }
+    this.onFinished.emit(schedulings);
   }
 
   onKidClick(kid: string) {
@@ -137,6 +144,7 @@ interface ICondition {
 }
 
 interface IAction {
+  $key: string;
   time: number;
   finishable: boolean;
   star: boolean;
@@ -148,4 +156,5 @@ interface IAction {
   snooze: number | null;
   show_before: number | null;
   conditions: ICondition | null;
+  run_next: string[] | null;
 }

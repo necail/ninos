@@ -30,8 +30,13 @@ export class AdminComponent {
     this.af.database.object(`ninos/actions/${item.$key}`).update({time: -1});
   }
 
-  createAction(newAction: string) {
-    this.af.database.list('ninos/actions').push(JSON.parse(newAction));
+  saveAction(action: string) {
+    let actionO = JSON.parse(action);
+    if (action) {
+      this.af.database.object(`ninos/actions/${actionO.name}`).set(actionO);
+    } else {
+      alert("invalid action");
+    }
   }
 
   star(kid: string) {
@@ -42,7 +47,9 @@ export class AdminComponent {
     this.af.database.object(`ninos/stars/${kid}/${star}`).remove();
   }
 
-  date(t: number): Date {
-    return new Date(t);
+  jsonify(o: any) {
+    delete o.$key;
+    return JSON.stringify(o);
   }
+
 }

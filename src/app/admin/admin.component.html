@@ -7,39 +7,15 @@
         *ngFor="let star of kid_stars.stars"
         (click)="removeStar(kid_stars.$key, star)">Remove Star</button>
   </div>
-  <textarea width="500" height="500" #newAction>{
-  "name" : "",
-  "show_before" : 0,
-  "duration" : 200000,
-  "show_after" : 4600000,
-  "icon" : "http://www.fumira.jp/cut/kodomo/img2/kodomo_illust-16.jpg",
-  "kids" : [ "je", "ji" ],
-
-  "finishable" : true,
-  "star" : true,
-
-  "repeat_offset" : 4800000,
-  "conditions" : {
-    "not_running" : [ "aaa" ],
-    "time" : [ {
-      "days" : "1,3,5,7",
-      "hours" : "7-20"
-    }, {
-      "days" : "2,4,6",
-      "hours" : "15-20"
-    } ]
-  },
-
-  "snooze" : 40000,
-  "alarm" : "http://onlineclock.net/audio/options/rooster.mp3",
-}</textarea>
-  <button (click)="createAction(newAction.value)">Submit</button>
+  <textarea width="500" height="500" #newAction></textarea>
+  <button (click)="saveAction(newAction.value)">Submit</button>
 
   <div class="text" *ngFor="let item of items | async">
-    {{item.name}}: {{date(item.time)}}
+    {{item.name}}: {{item.time | date}}
     <div>
       <button (click)="now(item)">Now</button>
       <button (click)="finish(item)">Finish</button>
+      <button (click)="newAction.value = jsonify(item)">Edit</button>
       <button *ngFor="let kid of item.kids" (click)="star(item, kid)">Star {{kid}}</button>
     </div>
   </div>

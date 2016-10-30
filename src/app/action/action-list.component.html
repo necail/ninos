@@ -12,7 +12,7 @@
 <div class="text" *ngFor="let action of actions | async">
   <div *ngIf="isScheduled(action)">
     <app-action
-        (onFinished)="onFinish(action, $event)"
+        (onFinished)="onFinish($event)"
         (onReady)="onReady(action, $event)"
         (onStatus)="onStatus(action, $event)"
         [checkRunning]="checkRunning.bind(this)"
