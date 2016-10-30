@@ -33,7 +33,7 @@ export const firebaseConfig = {
     RouterModule.forRoot([
       { path: 'admin', component: AdminComponent },
       { path: '', component: ActionListComponent }
-    ]),
+    ], { useHash: true }),
     AngularFireModule.initializeApp(firebaseConfig)
   ],
   providers: [],

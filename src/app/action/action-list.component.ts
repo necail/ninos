@@ -39,6 +39,6 @@ export class ActionListComponent {
   }
 
   onStatus(action: any, status: string) {
-    this.status[action.$key] = status;
+    this.status[action.name] = status;
   }
 }

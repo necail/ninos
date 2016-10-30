@@ -12,6 +12,7 @@
     style="background-color: gray; width: 400px;height: 10px;">
   <div
       [style.width]="(400 / (action.duration + action.show_before) * (time - action.time + action.show_before)) + 'px'"
+      [style.background-color]="status == 'before' ? 'red' : 'green'"
       style="background-color: red; height: 10px;"></div>
 </div>
 <pre *ngIf="debug">

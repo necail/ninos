@@ -7,72 +7,34 @@
         *ngFor="let star of kid_stars.stars"
         (click)="removeStar(kid_stars.$key, star)">Remove Star</button>
   </div>
+  <textarea width="500" height="500" #newAction>{
+  "name" : "",
+  "show_before" : 0,
+  "duration" : 200000,
+  "show_after" : 4600000,
+  "icon" : "http://www.fumira.jp/cut/kodomo/img2/kodomo_illust-16.jpg",
+  "kids" : [ "je", "ji" ],
 
-  <form #f="ngForm" (ngSubmit)="onSubmit(f)">
-    Type:
-    <select name="type" ngModel>
-      <option></option>
-    </select>
-    <br>
-    Icon:
-    <select name="icon" ngModel>
-      <option value="http://www.fumira.jp/cut/kodomo/img2/kodomo_illust-16.jpg">baño</option>
-      <option selected value="http://www.fumira.jp/cut/kodomo/img2/kodomo_illust-13.jpg">ordenar</option>
-      <option value="http://www.fumira.jp/cut/kodomo/img2/kodomo_illust-05.jpg">vestirse</option>
-      <option value="http://www.cliparts101.com/files/287/32A135A382EC8D2D2322C723D15AE083/Man_Thinking.png">thinking</option>
-    </select>
-    <br>
-    Alarm sound: 
-    <input type="checkbox" name="alarm" ngModel>
+  "finishable" : true,
+  "star" : true,
 
-    <select name="alarmUrl" ngModel>
-      <option value="http://onlineclock.net/audio/options/rooster.mp3">rooster</option>
-      <option selected value="http://onlineclock.net/audio/options/cuckoo-clock.mp3">cukoo</option>
-      <option value="http://onlineclock.net/audio/options/harp-strumming.mp3">harp</option>
-      <option value="http://www.cliparts101.com/files/287/32A135A382EC8D2D2322C723D15AE083/Man_Thinking.png">thinking</option>
-    </select>
-    <br>
-    Finishable:
-    <input type="checkbox" name="finishable" ngModel>
-    <br>
-    Kids:
-    <input type="text" name="kids" value="je,ji" ngModel>
-    <br>
-    Repeat:
-    <input type="checkbox" name="repeat" ngModel>
-    <input name="repeatEvery" value="3600" ngModel>
-    <br>
-    Snooze:
-    <input type="checkbox" name="snooze" ngModel>
-    <input name="snoozeTime" value="3600" ngModel>
-    <br>
-    <br>
+  "repeat_offset" : 4800000,
+  "conditions" : {
+    "not_running" : [ "aaa" ],
+    "time" : [ {
+      "days" : "1,3,5,7",
+      "hours" : "7-20"
+    }, {
+      "days" : "2,4,6",
+      "hours" : "15-20"
+    } ]
+  },
 
-    <button type="submit">Submit</button>
-  </form>
-  <p>Form value: {{ f.value | json }}</p>
+  "snooze" : 40000,
+  "alarm" : "http://onlineclock.net/audio/options/rooster.mp3",
+}</textarea>
+  <button (click)="createAction(newAction.value)">Submit</button>
 
-
-  <div>
-    Add Thinking Time<br>
-    Kid: <select #kidsThinking>
-      <option value="240">ji</option>
-      <option value="180">je</option>
-    </select><br>
-    Time: <input #timeThinking [value]="kidsThinking.value"><br>
-    <button (click)="addThinking(kidsThinking.selectedOptions[0].innerHTML, timeThinking.value)">Add</button>
-  </div>
-  <div>
-    Add Tidy Up<br>
-    Kids: <input #kidsTydyUp value="ji,je"><br>
-    <button (click)="addTidyUp(kidsTydyUp.value)">Add</button>
-  </div>
-  <div>
-    Add Potty<br>
-    Kids: <input #kidsPotty value="je"><br>
-    Repeat: <input #repeatPotty value="3600"><br>
-    <button (click)="addPotty(kidsPotty.value, repeatPotty.value)">Add</button>
-  </div>
   <div class="text" *ngFor="let item of items | async">
     {{item.name}}: {{date(item.time)}}
     <div>

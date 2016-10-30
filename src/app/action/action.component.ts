@@ -60,8 +60,7 @@ export class ActionComponent implements OnInit {
       }
     }
     if (this.action.repeat_offset) {
-      let ts: number = new Date().getTime() + (manual ? this.action.repeat_offset : 0);
-      let cand: Date = new Date(Math.max(this.action.time + this.action.repeat_offset, ts));
+      let cand: Date = new Date(new Date().getTime() + (manual ? this.action.repeat_offset : 0));
       if (recur) cand = later.schedule(recur).next(1, cand) as Date;
       this.onFinished.emit(cand.getTime());
     } else {
